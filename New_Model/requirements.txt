@@ -1,0 +1,27 @@
+
+# Intraday ML Trading System - Python Dependencies
+# Install with: pip install -r requirements.txt
+
+# Core Data Science
+pandas>=2.0.0
+numpy>=1.24.0
+scikit-learn>=1.3.0
+
+# Machine Learning
+xgboost>=2.0.0
+
+# Visualization
+plotly>=5.17.0
+
+# Web Framework
+streamlit>=1.28.0
+
+# HTTP Requests (for data APIs)
+requests>=2.31.0
+
+# Optional: For better performance
+# numba>=0.58.0  # JIT compilation for faster numpy operations
+
+# Optional: For production deployment
+# gunicorn>=21.2.0  # WSGI server
+# python-dotenv>=1.0.0  # Environment variables

@@ -10,6 +10,11 @@ import pandas as pd
 from typing import Dict, Tuple
 import numpy as np
 
+# Import functions from other modules
+from features import build_features
+from modeling import time_series_split, train_xgb_classifier, AlwaysUpModel, NaiveLastDirectionModel, evaluate_model
+from backtest import backtest_strategy
+
 
 def run_full_experiment(df_raw: pd.DataFrame,
                        threshold: float = 0.55,
@@ -76,10 +81,18 @@ def run_full_experiment(df_raw: pd.DataFrame,
     print("\n[4/6] Evaluating baseline models...")
     baseline_results = {}
     
+    # For NaiveLastDirectionModel, we need to include ret_1 in the features
+    X_test_with_ret1 = df_test[feature_cols + ['ret_1']]
+    X_train_with_ret1 = df_train[feature_cols + ['ret_1']]
+    
     for baseline_name, baseline_model in [('AlwaysUp', AlwaysUpModel()), 
                                            ('NaiveLastDirection', NaiveLastDirectionModel())]:
-        baseline_model.fit(X_train, y_train)
-        baseline_metrics = evaluate_model(baseline_model, X_test, y_test)
+        if baseline_name == 'NaiveLastDirection':
+            baseline_model.fit(X_train_with_ret1, y_train)
+            baseline_metrics = evaluate_model(baseline_model, X_test_with_ret1, y_test)
+        else:
+            baseline_model.fit(X_train, y_train)
+            baseline_metrics = evaluate_model(baseline_model, X_test, y_test)
         baseline_results[baseline_name] = baseline_metrics
         print(f"  {baseline_name}: Accuracy={baseline_metrics['accuracy']:.4f}")
     
@@ -130,3 +143,4 @@ def run_full_experiment(df_raw: pd.DataFrame,
         'backtest_results': backtest_results,
         'feature_importance': feature_importance
     }
+
